@@ -4,6 +4,8 @@ from scrapy import Request
 from crawllianjia.items import lianjiaItem
 from http import cookiejar
 import scrapy_redis
+from queuelib import PriorityQueue
+
 
 class LianjiaSpider(scrapy.Spider):
     name = 'lianjia'
@@ -11,17 +13,15 @@ class LianjiaSpider(scrapy.Spider):
     start_urls = ['http://lianjia.com/']
 
     def start_requests(self):
-        page = 1
-        url = 'https://sz.lianjia.com/ershoufang/pg%s/' % page
-        yield Request(url=url, callback=self.parse_index)
-
+        for page in range(1, 2):
+            url = 'https://bj.lianjia.com/ershoufang/pg%s/' % page
+            yield Request(url=url, dont_filter=True, callback=self.parse_index)
 
     def parse_index(self, response):
         content_urls = response.xpath(
             '//div[contains(@class,"content")]//ul[contains(@class,"sellListContent")]//li/a[1]/@href').extract()
         for url in content_urls:
             yield Request(url=url, callback=self.parse)
-
 
     def parse(self, response):
         item = lianjiaItem()

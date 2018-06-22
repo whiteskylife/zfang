@@ -22,12 +22,12 @@ ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
-CONCURRENT_REQUESTS = 3
+# CONCURRENT_REQUESTS = 5
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 2
+# DOWNLOAD_DELAY = 2
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 
@@ -65,8 +65,9 @@ DOWNLOAD_DELAY = 2
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    # 'crawllianjia.pipelines.CrawllianjiaPipeline': 300,
-   'crawllianjia.pipelines.MongoPipeline': 301,
-   'crawllianjia.pipelines.CsvPipeline': 302,
+   # 'crawllianjia.pipelines.MongoPipeline': 301,
+   # 'crawllianjia.pipelines.CsvPipeline': 302,
+   'crawllianjia.pipelines.MySQLPipeline': 302,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -95,6 +96,7 @@ MONGO_URI = '192.168.1.110'
 MONGO_DB = 'lianjia0616'
 
 
+'''
 # 替换scrapy核心调度器，用scrapy-redis的调度器
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 # 替换过滤规则为scrapy-redis的过滤规则
@@ -112,3 +114,26 @@ SCHEDULER_FLUSH_ON_START = False  # 本地测试设置为：True=清空，线上
 # redis连接配置，下面的方式不支持配置密码，可用REDIS_URL方式配置，Specify the host and port to use when connecting to Redis (optional).
 # REDIS_HOST = 'localhost'
 # REDIS_PORT = 6379
+
+'''
+
+# Ensure use this Scheduler
+SCHEDULER = "scrapy_redis_bloomfilter.scheduler.Scheduler"
+
+# Ensure all spiders share same duplicates filter through redis
+DUPEFILTER_CLASS = "scrapy_redis_bloomfilter.dupefilter.RFPDupeFilter"
+
+# Redis URL
+REDIS_URL = 'redis://root:redis-pass@192.168.1.110:6379'
+
+# Number of Hash Functions to use, defaults to 6
+BLOOMFILTER_HASH_NUMBER = 6
+
+# Redis Memory Bit of Bloomfilter Usage, 30 means 2^30 = 128MB, defaults to 30
+BLOOMFILTER_BIT = 30
+
+# Persist
+SCHEDULER_PERSIST = True
+
+MYSQL_DB_NAME = 'zufang'
+MYSQL_HOST = '192.168.1.110'
