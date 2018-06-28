@@ -35,7 +35,7 @@ class MySQLPipeline(object):
         # query.addErrback(self.handle_error)
         return item
 
-    def insert_db(self, tx, item):
+    def insert_db(self, cursor, item):
         values = (
             item['houseRecord'], item['price'], item['unitPrice'], item['room'], item['type'], item['area'],
             item['communityName'], item['areaName'], item['visitTime'], str(item['base']), str(item['transaction']),
@@ -43,7 +43,7 @@ class MySQLPipeline(object):
         )
         sql = 'INSERT INTO lianjia(houseRecord, price,unitPrice,room,type,area,communityName,areaName,visitTime,' \
               'base,transaction,base_more,tags,url) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-        tx.execute(sql, values)
+        cursor.execute(sql, values)
 
     # def handle_error(self, failure):
     #     print(failure)
